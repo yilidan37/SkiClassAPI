@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 
 const dataService = require("./modules/data-service.js")
 
-const myData = dataService("mongodb+srv://skiis:snowboard@cluster0.sst6d.mongodb.net/skiBear?retryWrites=true&w=majority");
+const myData = dataService("mongodb+srv://connect string");
 
 const app = express();
 
@@ -21,12 +21,7 @@ var JwtStrategy = passportJWT.Strategy;
 var jwtOptions = {};
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
 
-// IMPORTANT - this secret should be a long, unguessable string 
-// (ideally stored in a "protected storage" area on the 
-// web server, a topic that is beyond the scope of this course)
-// We suggest that you generate a random 64-character string
-// using the following online tool:
-// https://lastpass.com/generatepassword.php 
+
 
 jwtOptions.secretOrKey = '&0y7$noP#5rt99&GB%Pz7j2b1vkzaB0RKs%^N^0zOP89NT04mPuaM!&G8cbNZOtH';
 
@@ -34,9 +29,7 @@ var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
     console.log('payload received', jwt_payload);
 
     if (jwt_payload) {
-        // The following will ensure that all routes using 
-        // passport.authenticate have a req.user._id, req.user.userName, req.user.fullName & req.user.role values 
-        // that matches the request payload data
+        
         next(null, { _id: jwt_payload._id, 
             email: jwt_payload.email, 
             name: jwt_payload.name}); 
