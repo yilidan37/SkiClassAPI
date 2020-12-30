@@ -15,6 +15,10 @@ let userProfileSchema = new Schema({
     skiSnowboard:String,
     skiLevel: String,
     reservedClass:[],
+    isInstructor: {
+        "type":Boolean,
+        "default":false
+    },
     status:[String],
     favoriteLocation:[String],
     message:[{ author: String, message: String, date: Date }],

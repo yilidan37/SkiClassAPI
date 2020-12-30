@@ -10,6 +10,7 @@ let userSchema = new Schema({
     password:String,
     name:String,
     loginHistory:[{
+        "IPAddress":String,
         "dateTime":Date,
         "userAgent":String
     }]

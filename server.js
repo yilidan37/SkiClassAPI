@@ -4,9 +4,11 @@ const cors = require("cors");
 
 const bodyParser = require("body-parser");
 
-const dataService = require("./modules/data-service.js")
+const RequestIp = require('@supercharge/request-ip');
 
-const myData = dataService("mongodb+srv://connect string");
+const dataService = require("./modules/data-service.js");
+
+const myData = dataService("mongodb+srv://skiis:snowboard@cluster0.sst6d.mongodb.net/skiBear?retryWrites=true&w=majority");
 
 const app = express();
 
@@ -49,7 +51,7 @@ app.use(bodyParser.json());
 const HTTP_PORT = process.env.PORT || 8080;
 
 // POST /api/class (NOTE: This route must read the contents of the request body)
-app.post("/api/class",(req,res)=>{
+app.post("/api/class",passport.authenticate('jwt', { session: false }),(req,res)=>{
     myData.addNewClass(req.body).then((msg)=>{
         res.json({message: msg});
     }).catch((err)=>{
@@ -83,6 +85,8 @@ app.post("/api/instructor",(req,res)=>{
 })
 
 app.post("/api/login", (req, res) => {
+    req.body.userAgent = req.get('User-Agent');
+    req.body.IPAddress = RequestIp.getClientIp(req);
     myData.checkUser(req.body)
         .then((user) => {
             var payload={
@@ -126,6 +130,14 @@ app.get("/api/class/:id",passport.authenticate('jwt', { session: false }),(req,r
     })
 })
 
+app.get("/api/instructorClass/:email",passport.authenticate('jwt', { session: false }),(req,res)=>{
+    myData.getClassByInstructorEmail(req.params.email).then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
 app.get("/api/userPro/:email",passport.authenticate('jwt', { session: false }),(req,res)=>{
     myData.getUserDetByEmail(req.params.email).then((data)=>{
         res.json(data);
@@ -134,13 +146,21 @@ app.get("/api/userPro/:email",passport.authenticate('jwt', { session: false }),(
     })
 })
 
-app.get("/api/instructor/:id",(req,res)=>{
-    myData.getInstructorByNumber(req.params.id).then((data)=>{
+app.get("/api/instructor/:email",passport.authenticate('jwt', { session: false }),(req,res)=>{
+    myData.getInstructorByEmail(req.params.email).then((data)=>{
         res.json(data);
     }).catch((err)=>{
         res.json({message:`an error occurred: ${err}`});
     })
 })
+
+// app.get("/api/instructor/:id",(req,res)=>{
+//     myData.getInstructorByNumber(req.params.id).then((data)=>{
+//         res.json(data);
+//     }).catch((err)=>{
+//         res.json({message:`an error occurred: ${err}`});
+//     })
+// })
 
 // PUT /api/class (NOTE: This route must accept a numeric route parameter, ie: /api/class/5bd761dcae323e45a93ccfe8 as well as read the contents of the request body)
 app.put("/api/class/:id",(req,res)=>{

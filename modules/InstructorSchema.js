@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 let InstructorSchema = new Schema({
 
     RegisterDate: Date,
-    InstructorNum: Number,
+    InstructorID: Number,
     Email: String,
     FirstName: String,
     LastName: String,
@@ -13,10 +13,17 @@ let InstructorSchema = new Schema({
     InstructorLevel: Number,
     LisenceNum: Number,
     ExpireDate: Date,
-    isActivate: Boolean,
+    isActivate: {
+        "type":Boolean,
+        "default":false
+    },
     TeachingArea:[String],
     Language:[String],
-    Reviews: [{ author: String, comment: String, date: Date }]
+    Reviews: [{ author: String, comment: String, date: Date }],
+    img: { 
+        data: Buffer, 
+        contentType: String 
+    } ,
     
 });
 
