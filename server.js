@@ -8,7 +8,7 @@ const RequestIp = require('@supercharge/request-ip');
 
 const dataService = require("./modules/data-service.js");
 
-const myData = dataService("mongodb+srv://skiis:snowboard@cluster0.sst6d.mongodb.net/skiBear?retryWrites=true&w=majority");
+const myData = dataService("connect string");
 
 const app = express();
 
@@ -25,7 +25,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
 
 
 
-jwtOptions.secretOrKey = '&0y7$noP#5rt99&GB%Pz7j2b1vkzaB0RKs%^N^0zOP89NT04mPuaM!&G8cbNZOtH';
+jwtOptions.secretOrKey = 'qweqwe';
 
 var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
     console.log('payload received', jwt_payload);
