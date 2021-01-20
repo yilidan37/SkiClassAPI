@@ -8,7 +8,7 @@ const RequestIp = require('@supercharge/request-ip');
 
 const dataService = require("./modules/data-service.js");
 
-const myData = dataService("connect string");
+const myData = dataService("connectString");
 
 const app = express();
 
@@ -25,7 +25,7 @@ jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
 
 
 
-jwtOptions.secretOrKey = 'qweqwe';
+jwtOptions.secretOrKey = '&0y7$noP#5rt99&GB%Pz7j2b1vkzaB0RKs%^N^0zOP89NT04mPuaM!&G8cbNZOtH';
 
 var strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
     console.log('payload received', jwt_payload);
@@ -84,6 +84,14 @@ app.post("/api/instructor",(req,res)=>{
     })
 })
 
+app.post("/api/classOrder",(req,res)=>{
+    myData.addNewClassOrder(req.body).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
 app.post("/api/login", (req, res) => {
     req.body.userAgent = req.get('User-Agent');
     req.body.IPAddress = RequestIp.getClientIp(req);
@@ -111,9 +119,37 @@ app.get("/api/classes",(req,res)=>{
     })
 })
 
+app.get("/api/classOrder/:id",(req,res)=>{
+    
+    myData.getClassOrderById(req.params.id).then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/classOrderByUserEmail/:email",(req,res)=>{
+    
+    myData.getClassOrderByUserEmail(req.params.email).then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/classOrderByClassId/:id",(req,res)=>{
+    
+    myData.getClassOrderByClassId(req.params.id).then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
 app.get("/api/instructors",(req,res)=>{
     
     myData.getAllInstructor(req.query.page,req.query.perPage).then((data)=>{
+        // Response object
         res.json(data);
     }).catch((err)=>{
         res.json({message:`an error occurred: ${err}`});
@@ -171,6 +207,26 @@ app.put("/api/class/:id",(req,res)=>{
         res.json({message:`an error occurred: ${err}`});
     })
 });
+
+
+app.put("/api/classOrderByOrderId/:id",(req,res)=>{
+   
+    myData.updateClassOrderByOrderId(req.body,req.params.id).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+});
+
+app.put("/api/classOrderByClassId/:id",(req,res)=>{
+   
+    myData.updateClassOrderByClassId(req.body,req.params.id).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+});
+
 app.put("/api/userPro/:email",(req,res)=>{
    
     myData.updateUserDetByEmail(req.body,req.params.email).then((msg)=>{

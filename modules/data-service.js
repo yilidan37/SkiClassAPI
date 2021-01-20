@@ -12,7 +12,9 @@ const userProfileSchema = require("./userProfile.js");
 
 const counterSchema = require("./counterSchema");
 
-const classActiveSchema = require("./classActiveSchema")
+const classActiveSchema = require("./classActiveSchema");
+
+const classOrderSchema = require("./classOrderSchema")
 
 // function getNextInstructorSequenceValue(InstructorID, connectionString) {
 //     let db1 = mongoose.createConnection(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -36,7 +38,7 @@ module.exports = function (connectionString) {
     let UserProfile;
     let Counter;
     let ClassActive;
-
+    let ClassOrder;
 
     return {
 
@@ -55,6 +57,7 @@ module.exports = function (connectionString) {
                     UserProfile = db1.model("userdetails", userProfileSchema);
                     Counter = db1.model("counters", counterSchema);
                     ClassActive = db1.model("classactives", classActiveSchema);
+                    ClassOrder = db1.model("classOrders", classOrderSchema);
                     resolve();
                 });
             });
@@ -111,6 +114,36 @@ module.exports = function (connectionString) {
 
                 })
 
+
+            });
+        },
+
+        addNewClassOrder: function (data) {
+            return new Promise((resolve, reject) => {
+                let classOrderCounter;
+                Counter.findOne({ counterType: "classOrderID" }).exec().then(data1 => {
+                    //syc
+                    classOrderCounter = data1.sequence_value + 1;
+                    // console.log(instructorCounter + "  <--->   "+ data1);
+                    Counter.updateOne({ counterType: "classOrderID" }, {
+                        $set: { sequence_value: classOrderCounter }
+                    }).exec()
+                        .then()
+                        .catch(err => {
+                            reject(err);
+                        });
+                    data.OrderId = classOrderCounter;
+                    let newClassOrder = new ClassOrder(data);
+                    newClassOrder.save((err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(`new class order: ${newClassOrder.OrderId} successfully added`);
+                        }
+                    });
+                }).catch(err => {
+                    reject(err);
+                });
 
             });
         },
@@ -319,6 +352,36 @@ module.exports = function (connectionString) {
             });
         },
 
+        getClassOrderById: function (id) {
+            return new Promise((resolve, reject) => {
+                ClassOrder.findOne({ OrderId: id }).exec().then(data => {
+                    resolve(data);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+
+        getClassOrderByUserEmail: function (email) {
+            return new Promise((resolve, reject) => {
+                ClassOrder.find({ UserEmail: email }).sort({ classDate: -1 }).exec().then(data => {
+                    resolve(data);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+
+        getClassOrderByClassId: function (id) {
+            return new Promise((resolve, reject) => {
+                ClassOrder.find({ ClassId: id }).sort({ classDate: -1 }).exec().then(data => {
+                    resolve(data);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
+
         getClassByInstructorEmail: function (email) {
             return new Promise((resolve, reject) => {
                 Class.find({ instructorEmail: email }).sort({ classDate: -1 }).exec().then(data => {
@@ -326,6 +389,32 @@ module.exports = function (connectionString) {
                 }).catch(err => {
                     reject(err);
                 });
+            });
+        },
+
+        updateClassOrderByOrderId: function (data, id) {
+            return new Promise((resolve, reject) => {
+                ClassOrder.updateOne({ OrderId: id }, {
+                    $set: data
+                }).exec().then(() => {
+                    resolve(`Class order id:${id} successfully updated`)
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+        },
+
+        updateClassOrderByClassId: function (data, id) {
+            return new Promise((resolve, reject) => {
+                ClassOrder.updateMany({ ClassId: id }, {
+                    $set: data
+                }).exec().then(() => {
+                    resolve(`Class order with class id: ${id} successfully updated`)
+                }).catch(err => {
+                    reject(err);
+                });
+
             });
         },
 
