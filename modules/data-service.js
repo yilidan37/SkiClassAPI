@@ -14,7 +14,11 @@ const counterSchema = require("./counterSchema");
 
 const classActiveSchema = require("./classActiveSchema");
 
-const classOrderSchema = require("./classOrderSchema")
+const classOrderSchema = require("./classOrderSchema");
+
+const skierReviewSchema = require("./SkierReviewSchema");
+
+const skiInstructorReviewSchema = require("./SkiInstructorReviewSchema");
 
 // function getNextInstructorSequenceValue(InstructorID, connectionString) {
 //     let db1 = mongoose.createConnection(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -39,6 +43,8 @@ module.exports = function (connectionString) {
     let Counter;
     let ClassActive;
     let ClassOrder;
+    let SkierReview;
+    let SkiInstructorReview;
 
     return {
 
@@ -58,6 +64,8 @@ module.exports = function (connectionString) {
                     Counter = db1.model("counters", counterSchema);
                     ClassActive = db1.model("classactives", classActiveSchema);
                     ClassOrder = db1.model("classOrders", classOrderSchema);
+                    SkierReview = db1.model("skierReviews", skierReviewSchema);
+                    SkiInstructorReview = db1.model("skiInstructorReviews", skiInstructorReviewSchema);
                     resolve();
                 });
             });
@@ -192,6 +200,161 @@ module.exports = function (connectionString) {
             });
         },
 
+        addNewSkierReview: function (data) {
+            return new Promise((resolve, reject) => {
+                let skierReviewCounter;
+                Counter.findOne({ counterType: "SkierReviewId" }).exec().then(data1 => {
+                    skierReviewCounter = data1.sequence_value + 1;
+                    // console.log(instructorCounter + "  <--->   "+ data1);
+                    Counter.updateOne({ counterType: "SkierReviewId" }, {
+                        $set: { sequence_value: skierReviewCounter }
+                    }).exec()
+                        .then()
+                        .catch(err => {
+                            reject(err);
+                        });
+                    data.skierReviewId = skierReviewCounter;
+                    let newSkierReview = new SkierReview(data);
+                    newSkierReview.save((err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(`new skier review: ${newSkierReview.skierReviewId} successfully added`);
+                        }
+                    });
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+        },
+
+        getSkierReviewByAuthorId: function (id,page, perPage) {
+            return new Promise((resolve, reject) => {
+                if (+page && +perPage) {
+                    page = (+page) - 1;
+                    SkierReview.find({
+                        isActive: true,
+                        authorId: id
+                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
+                        resolve(skierReveiws)
+                    }).catch(err => {
+                        reject(err);
+                    });
+                } else {
+                    reject('page and perPage query parameters must be present');
+                }
+            });
+        },
+
+        getSkierReviewBySkierEmail: function (email,page, perPage) {
+            return new Promise((resolve, reject) => {
+                if (+page && +perPage) {
+                    page = (+page) - 1;
+                    SkierReview.find({
+                        isActive: true,
+                        toSkier: email
+                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
+                        resolve(skierReveiws)
+                    }).catch(err => {
+                        reject(err);
+                    });
+                } else {
+                    reject('page and perPage query parameters must be present');
+                }
+            });
+        },
+
+        updateSkierReviewById: function (data, id) {
+            return new Promise((resolve, reject) => {
+                SkierReview.updateOne({ skierReviewId: id }, {
+                    $set: data
+                }).exec().then(() => {
+                    resolve(`Skier Review id:${id} successfully updated`)
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+        },
+
+        addNewSkiInstructorReview: function (data) {
+            return new Promise((resolve, reject) => {
+                let skiInstructorReviewCounter;
+                Counter.findOne({ counterType: "SkiInstructorReviewId" }).exec().then(data1 => {
+                    skiInstructorReviewCounter = data1.sequence_value + 1;
+                    // console.log(instructorCounter + "  <--->   "+ data1);
+                    Counter.updateOne({ counterType: "SkiInstructorReviewId" }, {
+                        $set: { sequence_value: skiInstructorReviewCounter }
+                    }).exec()
+                        .then()
+                        .catch(err => {
+                            reject(err);
+                        });
+                    data.skiInstructorReviewId = skiInstructorReviewCounter;
+                    let newSkiInstructorReview = new SkiInstructorReview(data);
+                    newSkiInstructorReview.save((err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(`new ski instructor review: ${newSkiInstructorReview.skiInstructorReviewId} successfully added`);
+                        }
+                    });
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+        },
+
+        getSkiInstructorReviewByAuthorEmail: function (email,page, perPage) {
+            return new Promise((resolve, reject) => {
+                if (+page && +perPage) {
+                    page = (+page) - 1;
+                    SkiInstructorReview.find({
+                        isActive: true,
+                        authorEmail: email
+                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skiInstructorReveiws => {
+                        resolve(skiInstructorReveiws)
+                    }).catch(err => {
+                        reject(err);
+                    });
+                } else {
+                    reject('page and perPage query parameters must be present');
+                }
+            });
+        },
+
+        getSkiInstructorReviewByInstructorId: function (id,page, perPage) {
+            return new Promise((resolve, reject) => {
+                if (+page && +perPage) {
+                    page = (+page) - 1;
+                    SkiInstructorReview.find({
+                        isActive: true,
+                        toSkiInstructor: id
+                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skiInstructorReveiws => {
+                        resolve(skiInstructorReveiws)
+                    }).catch(err => {
+                        reject(err);
+                    });
+                } else {
+                    reject('page and perPage query parameters must be present');
+                }
+            });
+        },
+
+        updateSkiInstructorReviewById: function (data, id) {
+            return new Promise((resolve, reject) => {
+                SkiInstructorReview.updateOne({ skiInstructorReviewId: id }, {
+                    $set: data
+                }).exec().then(() => {
+                    resolve(`Ski Instrucotr Review id:${id} successfully updated`)
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+        },
         getUserDetByEmail: function (input) {
             return new Promise((resolve, reject) => {
                 UserProfile.findOne({ email: input }).exec().then(data => {
@@ -287,7 +450,6 @@ module.exports = function (connectionString) {
         //         reject("Incorrect password for user " + userData.email);
         //     }
         // });
-
 
 
         getAllInstructor: function (page, perPage) {
