@@ -8,7 +8,7 @@ const RequestIp = require('@supercharge/request-ip');
 
 const dataService = require("./modules/data-service.js");
 
-const myData = dataService("connectString");
+const myData = dataService("connect string");
 
 const app = express();
 
@@ -155,6 +155,80 @@ app.get("/api/instructors",(req,res)=>{
         res.json({message:`an error occurred: ${err}`});
     })
 })
+
+app.post("/api/skierReview",(req,res)=>{
+    myData.addNewSkierReview(req.body).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/skierReviewByAuthor",(req,res)=>{
+    
+    myData.getSkierReviewByAuthorId(req.query.id,req.query.page,req.query.perPage).then((data)=>{
+        // Response object
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/skierReviewBySkier",(req,res)=>{
+    
+    myData.getSkierReviewBySkierEmail(req.query.email,req.query.page,req.query.perPage).then((data)=>{
+        // Response object
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.put("/api/skierReview/:id",(req,res)=>{
+   
+    myData.updateSkierReviewById(req.body,req.params.id).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+});
+
+app.post("/api/skiInstructorReview",(req,res)=>{
+    myData.addNewSkiInstructorReview(req.body).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/skiInstructorReviewByAuthor",(req,res)=>{
+    
+    myData.getSkiInstructorReviewByAuthorEmail(req.query.email,req.query.page,req.query.perPage).then((data)=>{
+        // Response object
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/skiInstructorReviewByInstructorId",(req,res)=>{
+    
+    myData.getSkiInstructorReviewByInstructorId(req.query.id,req.query.page,req.query.perPage).then((data)=>{
+        // Response object
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.put("/api/skiInstructorReview/:id",(req,res)=>{
+   
+    myData.updateSkiInstructorReviewById(req.body,req.params.id).then((msg)=>{
+        res.json({message: msg});
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+});
 
 // GET /api/class (NOTE: This route must accept a numeric route parameter, ie: /api/class/5bd761dcae323e45a93ccfe8)
 
