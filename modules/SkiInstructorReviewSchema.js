@@ -4,8 +4,9 @@ let Schema = mongoose.Schema;
 
 let SkiInstructorReviewSchema = new Schema({
     skiInstructorReviewId: Number,
+    orderId: Number,
     authorEmail: String,
-    toSkiInstructor: Number,
+    toSkiInstructor: String,
     reviewDate: Date,
     teachingSkills: Number,
     skiSkills: Number,
