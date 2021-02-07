@@ -200,83 +200,83 @@ module.exports = function (connectionString) {
             });
         },
 
-        addNewSkierReview: function (data) {
-            return new Promise((resolve, reject) => {
-                let skierReviewCounter;
-                Counter.findOne({ counterType: "SkierReviewId" }).exec().then(data1 => {
-                    skierReviewCounter = data1.sequence_value + 1;
-                    // console.log(instructorCounter + "  <--->   "+ data1);
-                    Counter.updateOne({ counterType: "SkierReviewId" }, {
-                        $set: { sequence_value: skierReviewCounter }
-                    }).exec()
-                        .then()
-                        .catch(err => {
-                            reject(err);
-                        });
-                    data.skierReviewId = skierReviewCounter;
-                    let newSkierReview = new SkierReview(data);
-                    newSkierReview.save((err) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(`new skier review: ${newSkierReview.skierReviewId} successfully added`);
-                        }
-                    });
-                }).catch(err => {
-                    reject(err);
-                });
+        // addNewSkierReview: function (data) {
+        //     return new Promise((resolve, reject) => {
+        //         let skierReviewCounter;
+        //         Counter.findOne({ counterType: "SkierReviewId" }).exec().then(data1 => {
+        //             skierReviewCounter = data1.sequence_value + 1;
+        //             // console.log(instructorCounter + "  <--->   "+ data1);
+        //             Counter.updateOne({ counterType: "SkierReviewId" }, {
+        //                 $set: { sequence_value: skierReviewCounter }
+        //             }).exec()
+        //                 .then()
+        //                 .catch(err => {
+        //                     reject(err);
+        //                 });
+        //             data.skierReviewId = skierReviewCounter;
+        //             let newSkierReview = new SkierReview(data);
+        //             newSkierReview.save((err) => {
+        //                 if (err) {
+        //                     reject(err);
+        //                 } else {
+        //                     resolve(`new skier review: ${newSkierReview.skierReviewId} successfully added`);
+        //                 }
+        //             });
+        //         }).catch(err => {
+        //             reject(err);
+        //         });
 
-            });
-        },
+        //     });
+        // },
 
-        getSkierReviewByAuthorId: function (id,page, perPage) {
-            return new Promise((resolve, reject) => {
-                if (+page && +perPage) {
-                    page = (+page) - 1;
-                    SkierReview.find({
-                        isActive: true,
-                        authorId: id
-                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
-                        resolve(skierReveiws)
-                    }).catch(err => {
-                        reject(err);
-                    });
-                } else {
-                    reject('page and perPage query parameters must be present');
-                }
-            });
-        },
+        // getSkierReviewByAuthorId: function (id,page, perPage) {
+        //     return new Promise((resolve, reject) => {
+        //         if (+page && +perPage) {
+        //             page = (+page) - 1;
+        //             SkierReview.find({
+        //                 isActive: true,
+        //                 authorId: id
+        //             }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
+        //                 resolve(skierReveiws)
+        //             }).catch(err => {
+        //                 reject(err);
+        //             });
+        //         } else {
+        //             reject('page and perPage query parameters must be present');
+        //         }
+        //     });
+        // },
 
-        getSkierReviewBySkierEmail: function (email,page, perPage) {
-            return new Promise((resolve, reject) => {
-                if (+page && +perPage) {
-                    page = (+page) - 1;
-                    SkierReview.find({
-                        isActive: true,
-                        toSkier: email
-                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
-                        resolve(skierReveiws)
-                    }).catch(err => {
-                        reject(err);
-                    });
-                } else {
-                    reject('page and perPage query parameters must be present');
-                }
-            });
-        },
+        // getSkierReviewBySkierEmail: function (email,page, perPage) {
+        //     return new Promise((resolve, reject) => {
+        //         if (+page && +perPage) {
+        //             page = (+page) - 1;
+        //             SkierReview.find({
+        //                 isActive: true,
+        //                 toSkier: email
+        //             }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skierReveiws => {
+        //                 resolve(skierReveiws)
+        //             }).catch(err => {
+        //                 reject(err);
+        //             });
+        //         } else {
+        //             reject('page and perPage query parameters must be present');
+        //         }
+        //     });
+        // },
 
-        updateSkierReviewById: function (data, id) {
-            return new Promise((resolve, reject) => {
-                SkierReview.updateOne({ skierReviewId: id }, {
-                    $set: data
-                }).exec().then(() => {
-                    resolve(`Skier Review id:${id} successfully updated`)
-                }).catch(err => {
-                    reject(err);
-                });
+        // updateSkierReviewById: function (data, id) {
+        //     return new Promise((resolve, reject) => {
+        //         SkierReview.updateOne({ skierReviewId: id }, {
+        //             $set: data
+        //         }).exec().then(() => {
+        //             resolve(`Skier Review id:${id} successfully updated`)
+        //         }).catch(err => {
+        //             reject(err);
+        //         });
 
-            });
-        },
+        //     });
+        // },
 
         addNewSkiInstructorReview: function (data) {
             return new Promise((resolve, reject) => {
@@ -325,24 +325,45 @@ module.exports = function (connectionString) {
             });
         },
 
-        getSkiInstructorReviewByInstructorId: function (id,page, perPage) {
+        getAllSkiInstructorReviewByInstructorEmail: function (email) {
             return new Promise((resolve, reject) => {
-                if (+page && +perPage) {
-                    page = (+page) - 1;
-                    SkiInstructorReview.find({
-                        isActive: true,
-                        toSkiInstructor: id
-                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skiInstructorReveiws => {
-                        resolve(skiInstructorReveiws)
-                    }).catch(err => {
-                        reject(err);
-                    });
-                } else {
-                    reject('page and perPage query parameters must be present');
-                }
+                SkiInstructorReview.find({
+                    isActive: true,
+                    toSkiInstructor: email
+                }).sort({ reviewDate: -1 }).exec().then(skiInstructorReveiws => {
+                    resolve(skiInstructorReveiws)
+                }).catch(err => {
+                    reject(err);
+                });
             });
         },
 
+        // getSkiInstructorReviewByInstructorId: function (id,page, perPage) {
+        //     return new Promise((resolve, reject) => {
+        //         if (+page && +perPage) {
+        //             page = (+page) - 1;
+        //             SkiInstructorReview.find({
+        //                 isActive: true,
+        //                 toSkiInstructor: id
+        //             }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skiInstructorReveiws => {
+        //                 resolve(skiInstructorReveiws)
+        //             }).catch(err => {
+        //                 reject(err);
+        //             });
+        //         } else {
+        //             reject('page and perPage query parameters must be present');
+        //         }
+        //     });
+        // },
+        getSkiInstructorReviewByOrderId: function (id) {
+            return new Promise((resolve, reject) => {
+                SkiInstructorReview.findOne({ orderId: id }).exec().then(data => {
+                    resolve(data);
+                }).catch(err => {
+                    reject(err);
+                });
+            });
+        },
         updateSkiInstructorReviewById: function (data, id) {
             return new Promise((resolve, reject) => {
                 SkiInstructorReview.updateOne({ skiInstructorReviewId: id }, {
