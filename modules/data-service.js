@@ -325,21 +325,16 @@ module.exports = function (connectionString) {
             });
         },
 
-        getSkiInstructorReviewByInstructorEmail: function (email,page, perPage) {
+        getAllSkiInstructorReviewByInstructorEmail: function (email) {
             return new Promise((resolve, reject) => {
-                if (+page && +perPage) {
-                    page = (+page) - 1;
-                    SkiInstructorReview.find({
-                        isActive: true,
-                        toSkiInstructor: email
-                    }).sort({ reviewDate: -1 }).skip(page * +perPage).limit(+perPage).exec().then(skiInstructorReveiws => {
-                        resolve(skiInstructorReveiws)
-                    }).catch(err => {
-                        reject(err);
-                    });
-                } else {
-                    reject('page and perPage query parameters must be present');
-                }
+                SkiInstructorReview.find({
+                    isActive: true,
+                    toSkiInstructor: email
+                }).sort({ reviewDate: -1 }).exec().then(skiInstructorReveiws => {
+                    resolve(skiInstructorReveiws)
+                }).catch(err => {
+                    reject(err);
+                });
             });
         },
 

@@ -198,7 +198,7 @@ app.get("/api/instructors",(req,res)=>{
     })
 })
 
-app.get("/api/instructor/:email",passport.authenticate('jwt', { session: false }),(req,res)=>{
+app.get("/api/instructor/:email", (req,res)=>{
     myData.getInstructorByEmail(req.params.email).then((data)=>{
         res.json(data);
     }).catch((err)=>{
@@ -362,7 +362,7 @@ app.get("/api/skiInstructorReviewByAuthor",(req,res)=>{
 })
 
 app.get("/api/skiInstructorReviewByInstructor",(req,res)=>{
-    myData.getSkiInstructorReviewByInstructorEmail(req.query.email,req.query.page,req.query.perPage).then((data)=>{
+    myData.getAllSkiInstructorReviewByInstructorEmail(req.query.email).then((data)=>{
         // Response object
         res.json(data);
     }).catch((err)=>{
