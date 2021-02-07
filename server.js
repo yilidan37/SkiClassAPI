@@ -8,7 +8,7 @@ const RequestIp = require('@supercharge/request-ip');
 
 const dataService = require("./modules/data-service.js");
 
-const myData = dataService("connectString");
+const myData = dataService("mongodb+srv://skiis:snowboard@cluster0.sst6d.mongodb.net/skiBear?retryWrites=true&w=majority");
 
 const app = express();
 
@@ -69,6 +69,15 @@ app.post("/api/class",passport.authenticate('jwt', { session: false }),(req,res)
 app.get("/api/classes",(req,res)=>{
     
     myData.getAllClass(req.query.page,req.query.perPage).then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json({message:`an error occurred: ${err}`});
+    })
+})
+
+app.get("/api/allClasses",(req,res)=>{
+    
+    myData.getAllClasses().then((data)=>{
         res.json(data);
     }).catch((err)=>{
         res.json({message:`an error occurred: ${err}`});
