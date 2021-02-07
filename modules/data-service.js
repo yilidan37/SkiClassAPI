@@ -86,7 +86,7 @@ module.exports = function (connectionString) {
                         });
                     // data.classId = classCounter;
                     let newClass = new Class(data);
-                    newClass.classId =classCounter;
+                    newClass.classId = classCounter;
                     newClass.save((err) => {
                         if (err) {
                             reject(err);
@@ -105,15 +105,15 @@ module.exports = function (connectionString) {
                             });
 
                         let newclassActive = new ClassActive();
-                        newclassActive.PostId =classActiveCounter;
+                        newclassActive.PostId = classActiveCounter;
                         newclassActive.ClassId = classCounter;
                         newclassActive.InstructorId = data.InstructorId;
                         newclassActive.ClassAction = "Post";
                         newclassActive.PostDate = (new Date()).toString();
-                        newclassActive.save((err)=>{
-                            if(err){
+                        newclassActive.save((err) => {
+                            if (err) {
                                 reject(err);
-                            }else{
+                            } else {
                                 resolve(`new class active: ${newclassActive.PostId} successfully added`);
                             }
                         })
@@ -307,7 +307,7 @@ module.exports = function (connectionString) {
             });
         },
 
-        getSkiInstructorReviewByAuthorEmail: function (email,page, perPage) {
+        getSkiInstructorReviewByAuthorEmail: function (email, page, perPage) {
             return new Promise((resolve, reject) => {
                 if (+page && +perPage) {
                     page = (+page) - 1;
@@ -505,6 +505,18 @@ module.exports = function (connectionString) {
 
         },
 
+        getAllClasses: function () {
+            return new Promise((resolve, reject) => {
+                Class.find().sort({ classDate: -1 }).exec().then(classes => {
+                    resolve(classes)
+                }).catch(err => {
+                    reject(err);
+                });
+
+            });
+
+        },
+
         getInstructorByNumber: function (num) {
             return new Promise((resolve, reject) => {
                 Instructor.findOne({ InstructorID: num }).exec().then(data => {
@@ -527,7 +539,7 @@ module.exports = function (connectionString) {
 
         getClassById: function (id) {
             return new Promise((resolve, reject) => {
-                Class.findOne({ _id: id }).exec().then(data => {
+                Class.findOne({ classId: id }).exec().then(data => {
                     resolve(data);
                 }).catch(err => {
                     reject(err);
@@ -616,7 +628,7 @@ module.exports = function (connectionString) {
 
         updateClassById: function (data, id) {
             return new Promise((resolve, reject) => {
-                Class.updateOne({ _id: id }, {
+                Class.updateOne({ classId: id }, {
                     $set: data
                 }).exec().then(() => {
                     resolve(`class ${id} successfully updated`)
@@ -639,7 +651,7 @@ module.exports = function (connectionString) {
 
         deleteClassById: function (id) {
             return new Promise((resolve, reject) => {
-                Class.deleteOne({ _id: id }).exec().then(() => {
+                Class.deleteOne({ classId: id }).exec().then(() => {
                     resolve(`Class ${id} successfully deleted`)
                 }).catch(err => {
                     reject(err);
